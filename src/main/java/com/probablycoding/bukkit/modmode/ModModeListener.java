@@ -38,7 +38,7 @@ public class ModModeListener implements Listener {
 
         if (plugin.state.isModMode(player) && !player.getName().startsWith(ChatColor.GREEN.toString())) {
             event.setJoinMessage(null);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new ModModeRunnable(player), 20);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new ModModeRunnable(player), 1);
         }
 
         if (plugin.state.isVanished(player)) {
