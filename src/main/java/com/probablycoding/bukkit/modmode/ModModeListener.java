@@ -3,6 +3,7 @@ package com.probablycoding.bukkit.modmode;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -125,20 +126,35 @@ public class ModModeListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
+        Player damager = null;
+        Player victim = null;
+
         // block PVP with a message
         if (event instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-            if (e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
-                Player damager = (Player) e.getDamager();
-                Player victim = (Player) e.getEntity();
+            if (e.getDamager() instanceof Player) {
+                damager = (Player) e.getDamager();
+            } else if (e.getDamager() instanceof Projectile) {
+                Projectile projectile = (Projectile) e.getDamager();
+                if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
+                    damager = (Player) projectile.getShooter();
+                }
+            }
 
+            if (e.getEntity() instanceof Player) {
+                victim = (Player) e.getEntity();
+            }
+
+            if (damager != null) {
                 if (plugin.state.isVanished(damager) || plugin.state.isFullVanished(damager)) {
                     event.setCancelled(true);
                 }
                 if (plugin.state.isModMode(damager)) {
                     event.setCancelled(true);
                 }
+            }
 
+            if (damager != null && victim != null) {
                 // only show message if they aren't invisible
                 if (plugin.state.isModMode(victim) && !(plugin.state.isVanished(victim) || plugin.state.isFullVanished(victim))) {
                     damager.sendMessage("This moderator is in ModMode.");
@@ -150,7 +166,7 @@ public class ModModeListener implements Listener {
 
         // block all damage to invisible and modmode players
         if (event.getEntity() instanceof Player) {
-            Player victim = (Player) event.getEntity();
+            victim = (Player) event.getEntity();
             if (plugin.state.isVanished(victim) || plugin.state.isFullVanished(victim)) {
                 event.setCancelled(true);
             }
