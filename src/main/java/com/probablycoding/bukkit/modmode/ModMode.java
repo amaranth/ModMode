@@ -141,6 +141,10 @@ public class ModMode extends JavaPlugin {
         entity = scm.moveToWorld(entity, entity.dimension, true, loc);
 
         ((WorldServer) entity.world).tracker.track(entity);
+
+        if (enable) {
+            player.setAllowFlight(true);
+        }
     }
 
     @Override
