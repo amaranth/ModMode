@@ -25,7 +25,7 @@ public class ModModeListener implements Listener {
         }
 
         public void run() {
-            plugin.toggleModMode(player, true, true);
+            plugin.state.enableModMode(player, true);
         }
     }
 
@@ -43,25 +43,18 @@ public class ModModeListener implements Listener {
         }
 
         if (plugin.state.isVanished(player)) {
-            plugin.enableVanish(player);
-        }
-        if (plugin.state.isFullVanished(player)) {
-            plugin.enableFullVanish(player);
+            plugin.state.enableVanish(player, plugin.state.getVanishLevel(player));
         }
 
-        boolean showmods = Permissions.hasPermission(player, Permissions.SHOWMODS);
-        boolean showvanished = Permissions.hasPermission(player, Permissions.SHOWVANISHED);
+        int level = plugin.state.getVanishLevel(player);
         for (Player other : plugin.getServer().getOnlinePlayers()) {
-            if (plugin.state.isVanished(other) && !(showmods || showvanished)) {
-                player.hidePlayer(other);
-            }
-            if (plugin.state.isFullVanished(other) && !showvanished) {
+            if (plugin.state.isVanished(other) && plugin.state.getVanishLevel(other) > level) {
                 player.hidePlayer(other);
             }
         }
 
         // send our own join message only to people who can see the player
-        if ((plugin.state.isVanished(player) || plugin.state.isFullVanished(player)) && event.getJoinMessage() != null) {
+        if (plugin.state.isVanished(player) && event.getJoinMessage() != null) {
             String message = event.getJoinMessage();
             event.setJoinMessage(null);
             for (Player other : Bukkit.getOnlinePlayers()) {
@@ -76,7 +69,7 @@ public class ModModeListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         // send our own quit message only to people who can see the player
         Player player = event.getPlayer();
-        if ((plugin.state.isVanished(player) || plugin.state.isFullVanished(player)) && event.getQuitMessage() != null) {
+        if (plugin.state.isVanished(player) && event.getQuitMessage() != null) {
             String message = event.getQuitMessage();
             event.setQuitMessage(null);
             for (Player other : Bukkit.getOnlinePlayers()) {
@@ -90,7 +83,7 @@ public class ModModeListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerPickupItem(PlayerPickupItemEvent event) {
         Player player = event.getPlayer();
-        if (plugin.state.isVanished(player) || plugin.state.isFullVanished(player)) {
+        if (plugin.state.isVanished(player)) {
             event.setCancelled(true);
         }
         if (plugin.state.isModMode(player)) {
@@ -101,7 +94,7 @@ public class ModModeListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
-        if (plugin.state.isVanished(player) || plugin.state.isFullVanished(player)) {
+        if (plugin.state.isVanished(player)) {
             event.setCancelled(true);
         }
         if (plugin.state.isModMode(player)) {
@@ -116,7 +109,7 @@ public class ModModeListener implements Listener {
         }
 
         Player player = (Player) event.getTarget();
-        if (plugin.state.isVanished(player) || plugin.state.isFullVanished(player)) {
+        if (plugin.state.isVanished(player)) {
             event.setCancelled(true);
         }
         if (plugin.state.isModMode(player)) {
@@ -146,7 +139,7 @@ public class ModModeListener implements Listener {
             }
 
             if (damager != null) {
-                if (plugin.state.isVanished(damager) || plugin.state.isFullVanished(damager)) {
+                if (plugin.state.isVanished(damager)) {
                     event.setCancelled(true);
                 }
                 if (plugin.state.isModMode(damager)) {
@@ -156,7 +149,7 @@ public class ModModeListener implements Listener {
 
             if (damager != null && victim != null) {
                 // only show message if they aren't invisible
-                if (plugin.state.isModMode(victim) && !(plugin.state.isVanished(victim) || plugin.state.isFullVanished(victim))) {
+                if (plugin.state.isModMode(victim) && !plugin.state.isVanished(victim)) {
                     damager.sendMessage("This moderator is in ModMode.");
                     damager.sendMessage("ModMode should only be used for official server business.");
                     damager.sendMessage("Please let an admin know if a moderator is abusing ModMode.");
@@ -167,7 +160,7 @@ public class ModModeListener implements Listener {
         // block all damage to invisible and modmode players
         if (event.getEntity() instanceof Player) {
             victim = (Player) event.getEntity();
-            if (plugin.state.isVanished(victim) || plugin.state.isFullVanished(victim)) {
+            if (plugin.state.isVanished(victim)) {
                 event.setCancelled(true);
             }
             if (plugin.state.isModMode(victim)) {

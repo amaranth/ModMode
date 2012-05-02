@@ -12,30 +12,119 @@ commands:
   vanish:
     description: Go invisible
     permission: modmode.vanish
-  fullvanish:
-    description: Go fully invisible
-    permission: modmode.fullvanish
+    usage:
+      /<command> [level|name|list]
   unvanish:
     description: Reappear
     permission: modmode.unvanish
+    usage:
+      /<command> [name]
   modmode:
     description: Toggle ModMode
     permission: modmode.toggle
 
 permissions:
-  modmode:
-    description: Allow the player all Vanish-related permissions
-    children:
-      modmode.vanish:
-        description: Allow the player to vanish
-      modmode.fullvanish:
-        description: Allow the player to vanish from Moderators
-      modmode.unvanish:
-        description: Allow the player to reappear
-      modmode.showvanished:
-        description: Allow the player to see all other vanished players
+  modmode.vanish:
+    description: Allow the player to vanish. Used for command permissions, do not set directly.
+  modmode.vanish.others:
+    description: Allow the player to vanish others
+  modmode.unvanish:
+    description: Allow the player to reappear. Used for command permissions, do not set directly.
+  modmode.unvanish.others:
+    description: Allow the player to make others reappear
   modmode.toggle:
     description: Allow the player to enter ModMode
-  modmode.showmods:
-    description: Allow the player to see other vanished Moderators
 
+  #vanish levels
+  modmode.vanish.level.1:
+    children:
+      modmode.vanish: true
+      modmode.unvanish: true
+  modmode.vanish.level.2:
+    children:
+      modmode.vanish: true
+      modmode.unvanish: true
+      modmode.vanish.level.1: true
+  modmode.vanish.level.3:
+    children:
+      modmode.vanish: true
+      modmode.unvanish: true
+      modmode.vanish.level.2: true
+      modmode.vanish.level.1: true
+  modmode.vanish.level.4:
+    children:
+      modmode.vanish: true
+      modmode.unvanish: true
+      modmode.vanish.level.3: true
+      modmode.vanish.level.2: true
+      modmode.vanish.level.1: true
+  modmode.vanish.level.5:
+    children:
+      modmode.vanish: true
+      modmode.unvanish: true
+      modmode.vanish.level.4: true
+      modmode.vanish.level.3: true
+      modmode.vanish.level.2: true
+      modmode.vanish.level.1: true
+  modmode.vanish.level.6:
+    children:
+      modmode.vanish: true
+      modmode.unvanish: true
+      modmode.vanish.level.5: true
+      modmode.vanish.level.4: true
+      modmode.vanish.level.3: true
+      modmode.vanish.level.2: true
+      modmode.vanish.level.1: true
+  modmode.vanish.level.7:
+    children:
+      modmode.vanish: true
+      modmode.unvanish: true
+      modmode.vanish.level.6: true
+      modmode.vanish.level.5: true
+      modmode.vanish.level.4: true
+      modmode.vanish.level.3: true
+      modmode.vanish.level.2: true
+      modmode.vanish.level.1: true
+  modmode.vanish.level.8:
+    children:
+      modmode.vanish: true
+      modmode.unvanish: true
+      modmode.vanish.level.7: true
+      modmode.vanish.level.6: true
+      modmode.vanish.level.5: true
+      modmode.vanish.level.4: true
+      modmode.vanish.level.3: true
+      modmode.vanish.level.2: true
+      modmode.vanish.level.1: true
+  modmode.vanish.level.9:
+    children:
+      modmode.vanish: true
+      modmode.unvanish: true
+      modmode.vanish.level.8: true
+      modmode.vanish.level.7: true
+      modmode.vanish.level.6: true
+      modmode.vanish.level.5: true
+      modmode.vanish.level.4: true
+      modmode.vanish.level.3: true
+      modmode.vanish.level.2: true
+      modmode.vanish.level.1: true
+  modmode.vanish.level.10:
+    children:
+      modmode.vanish: true
+      modmode.unvanish: true
+      modmode.vanish.level.9: true
+      modmode.vanish.level.8: true
+      modmode.vanish.level.7: true
+      modmode.vanish.level.6: true
+      modmode.vanish.level.5: true
+      modmode.vanish.level.4: true
+      modmode.vanish.level.3: true
+      modmode.vanish.level.2: true
+      modmode.vanish.level.1: true
+
+  modmode:
+    description: Allow the player all vanish related permissions
+    children:
+      modmode.vanish.level.10: true
+      modmode.vanish.others: true
+      modmode.unvanish.others: true
